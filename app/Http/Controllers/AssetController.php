@@ -7,6 +7,9 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class AssetController extends Controller
 {
@@ -193,5 +196,16 @@ class AssetController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function generatePdf()
+    {
+        $assets = Asset::all();
+        $categories = Category::all();
+
+        $pdf = Pdf::loadView('pdf.asset_report', compact('assets', 'categories'))
+                ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('laporan_aset.pdf');
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AssetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('assets.index');
 });
+
+Route::get('/assets/print-pdf', [AssetController::class, 'generatePdf'])->name('assets.printPdf');
+Route::post('/store-chart', [AssetController::class, 'storeChart']);

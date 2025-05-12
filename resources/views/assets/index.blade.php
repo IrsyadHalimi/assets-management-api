@@ -27,6 +27,7 @@
 
     <button class="btn btn-primary mb-3" onclick="openForm()">Tambah Aset</button>
 
+    <a href="{{ route('assets.printPdf') }}" class="btn btn-warning mb-3">Cetak PDF</a>
     <div class="table-responsive">
         <table class="table table-bordered table-striped" id="assetTable">
             <thead class="table-dark text-center align-middle">
