@@ -116,7 +116,6 @@ class AssetController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
-        dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'asset_code' => 'sometimes|required|string|max:100|unique:assets,asset_code,' . $id . ',id',
@@ -138,7 +137,17 @@ class AssetController extends Controller
 
         try {
             $asset = Asset::findOrFail($id);
-            $asset->update($validator->validated());
+            $asset->update([
+                'name' => $request->name,
+                'asset_code' => $request->asset_code,
+                'category_id' => $request->category_id,
+                'location' => $request->location,
+                'description' => $request->description,
+                'price' => $request->price,
+                'quantity' => $request->quantity,
+                'amount' => $request->amount,
+                'established_at' => $request->established_at,
+            ]);
 
             return response()->json([
                 'status' => 'success',

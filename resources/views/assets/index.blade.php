@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Aset</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         #notification-tray {
@@ -26,23 +27,26 @@
 
     <button class="btn btn-primary mb-3" onclick="openForm()">Tambah Aset</button>
 
-    <table class="table table-bordered table-striped table-responsive" id="assetTable">
-        <thead class="table-dark">
-            <tr>
-                <th>Nama</th>
-                <th>Kode Aset</th>
-                <th>Kategori</th>
-                <th>Lokasi</th>
-                <th>Deskripsi</th>
-                <th>Harga Per Item</th>
-                <th>Jumlah</th>
-                <th>Total Nilai</th>
-                <th>Tanggal Pengesahan</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="assetTable">
+            <thead class="table-dark text-center align-middle">
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Kode Aset</th>
+                    <th>Kategori</th>
+                    <th>Lokasi</th>
+                    <th>Deskripsi</th>
+                    <th>Harga Per Item</th>
+                    <th>Jumlah</th>
+                    <th>Total Nilai</th>
+                    <th>Tanggal Pengesahan</th>
+                    <th colspan="2">Aksi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <!-- Modal Form -->
     <div class="modal fade" id="assetModal" tabindex="-1">
@@ -125,10 +129,12 @@
                 .then(res => {
                     const tbody = document.querySelector('#assetTable tbody');
                     tbody.innerHTML = '';
+                    let i = 1;
                     res.data.data.forEach(asset => {
                         let establishedAt = new Date(asset.established_at).toISOString().slice(0, 10);
                         tbody.innerHTML += `
                             <tr>
+                                <td>${i++}</td>
                                 <td>${asset.name}</td>
                                 <td>${asset.asset_code}</td>
                                 <td>${asset.category?.name ?? '-'}</td>
@@ -140,6 +146,8 @@
                                 <td>${establishedAt}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-1" onclick='editAsset(${JSON.stringify(asset)})'>Edit</button>
+                                </td>
+                                <td>
                                     <button class="btn btn-sm btn-danger" onclick='deleteAsset(${asset.id})'>Hapus</button>
                                 </td>
                             </tr>
@@ -183,6 +191,7 @@
                 description: document.getElementById('description').value,
                 price: document.getElementById('price').value,
                 quantity: document.getElementById('quantity').value,
+                amount: document.getElementById('amount').value,
                 established_at: document.getElementById('established_at').value,
             };
             console.log(data);
