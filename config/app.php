@@ -184,7 +184,10 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        'throttle:api',
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
-
+    
 ];
