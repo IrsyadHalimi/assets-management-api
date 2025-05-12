@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ class AssetController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $assets = Asset::all();
+            $assets = Asset::with('category')->get();
             return response()->json([
                 'status' => 'success',
                 'data' => $assets
@@ -44,9 +45,14 @@ class AssetController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'asset_code' => 'required|string|max:100|unique:assets,asset_code,' . $request->id,
+            'category_id' => 'required|exists:categories,id',
             'location' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'price' => 'numeric|min:0',
+            'quantity' => 'integer|min:0',
+            'amount' => 'numeric|min:0',
+            'established_at' => 'date',
         ]);
 
         if ($validator->fails()) {
@@ -110,11 +116,17 @@ class AssetController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
-            'category' => 'sometimes|required|string|max:255',
+            'asset_code' => 'sometimes|required|string|max:100|unique:assets,asset_code,' . $id . ',id',
+            'category_id' => 'sometimes|required|exists:categories,id',
             'location' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'price' => 'sometimes|required|numeric|min:0',
+            'quantity' => 'sometimes|required|integer|min:0',
+            'amount' => 'sometimes|required|numeric|min:0',
+            'established_at' => 'sometimes|required|date',
         ]);
 
         if ($validator->fails()) {

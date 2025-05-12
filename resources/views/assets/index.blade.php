@@ -46,7 +46,7 @@
 
     <!-- Modal Form -->
     <div class="modal fade" id="assetModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg"> <!-- Tambahkan modal-lg untuk lebar -->
             <div class="modal-content">
                 <form id="assetForm">
                     <div class="modal-header">
@@ -55,41 +55,45 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="assetId">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nama</label>
-                            <input type="text" id="name" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label>Kode Asset</label>
-                            <input type="text" class="form-control" id="asset_code" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Kategori</label>
-                            <input type="text" id="category" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="location" class="form-label">Lokasi</label>
-                            <input type="text" id="location" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
-                            <textarea id="description" class="form-control"></textarea>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label>Harga per Unit</label>
-                            <input type="number" class="form-control" id="price">
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label>Jumlah</label>
-                            <input type="number" class="form-control" id="quantity">
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label>Total Nilai</label>
-                            <input type="number" class="form-control" id="amount" readonly>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label>Tanggal Penetapan</label>
-                            <input type="date" class="form-control" id="established_at">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Nama</label>
+                                <input type="text" id="name" class="form-control" >
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="asset_code" class="form-label">Kode Asset</label>
+                                <input type="text" class="form-control" id="asset_code" >
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category_id" class="form-label">Kategori</label>
+                                <select id="category_id" class="form-control" name="category_id" required>
+                                    <option value="">-- Memuat kategori... --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Lokasi</label>
+                                <input type="text" id="location" class="form-control" >
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="description" class="form-label">Deskripsi</label>
+                                <textarea id="description" class="form-control"></textarea>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="price" class="form-label">Harga per Unit</label>
+                                <input type="number" class="form-control" id="price">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="quantity" class="form-label">Jumlah</label>
+                                <input type="number" class="form-control" id="quantity">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="amount" class="form-label">Total Nilai</label>
+                                <input type="number" class="form-control" id="amount" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="established_at" class="form-label">Tanggal Penetapan</label>
+                                <input type="date" class="form-control" id="established_at">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -100,7 +104,6 @@
             </div>
         </div>
     </div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -123,17 +126,18 @@
                     const tbody = document.querySelector('#assetTable tbody');
                     tbody.innerHTML = '';
                     res.data.data.forEach(asset => {
+                        let establishedAt = new Date(asset.established_at).toISOString().slice(0, 10);
                         tbody.innerHTML += `
                             <tr>
                                 <td>${asset.name}</td>
                                 <td>${asset.asset_code}</td>
-                                <td>${asset.category}</td>
+                                <td>${asset.category?.name ?? '-'}</td>
                                 <td>${asset.location}</td>
                                 <td>${asset.description || '-'}</td>
                                 <td>${asset.price}</td>
                                 <td>${asset.quantity}</td>
                                 <td>${asset.amount}</td>
-                                <td>${asset.established_at}</td>
+                                <td>${establishedAt}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-1" onclick='editAsset(${JSON.stringify(asset)})'>Edit</button>
                                     <button class="btn btn-sm btn-danger" onclick='deleteAsset(${asset.id})'>Hapus</button>
@@ -153,11 +157,17 @@
         }
 
         function editAsset(asset) {
+            let establishedAt = new Date(asset.established_at).toISOString().slice(0, 10);
             document.getElementById('assetId').value = asset.id;
             document.getElementById('name').value = asset.name;
-            document.getElementById('category').value = asset.category;
+            document.getElementById('asset_code').value = asset.asset_code;
+            document.getElementById('category_id').value = asset.category_id;
             document.getElementById('location').value = asset.location;
             document.getElementById('description').value = asset.description || '';
+            document.getElementById('price').value = asset.price;
+            document.getElementById('quantity').value = asset.quantity;
+            document.getElementById('amount').value = asset.amount;
+            document.getElementById('established_at').value = establishedAt;
             document.getElementById('modalTitle').textContent = 'Edit Aset';
             assetModal.show();
         }
@@ -167,10 +177,15 @@
             const id = document.getElementById('assetId').value;
             const data = {
                 name: document.getElementById('name').value,
-                category: document.getElementById('category').value,
+                asset_code: document.getElementById('asset_code').value,
+                category_id: document.getElementById('category_id').value,
                 location: document.getElementById('location').value,
                 description: document.getElementById('description').value,
+                price: document.getElementById('price').value,
+                quantity: document.getElementById('quantity').value,
+                established_at: document.getElementById('established_at').value,
             };
+            console.log(data);
             const method = id ? 'put' : 'post';
             const url = id ? `/api/assets/${id}` : '/api/assets';
 
@@ -222,6 +237,24 @@
             const qty = parseInt(document.getElementById('quantity').value) || 0;
             document.getElementById('amount').value = (price * qty).toFixed(2);
         }
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(data => {
+                    let select = document.getElementById('category_id');
+                    select.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+                    data.forEach(cat => {
+                        let opt = document.createElement('option');
+                        opt.value = cat.id;
+                        opt.textContent = cat.name;
+                        select.appendChild(opt);
+                    });
+                })
+                .catch(() => {
+                    alert('Gagal memuat kategori');
+                });
+        });
     </script>
 </body>
 </html>

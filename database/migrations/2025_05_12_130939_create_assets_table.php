@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('asset_code')->unique();
-            $table->string('category');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('location');
             $table->text('description')->nullable();
             $table->decimal('price', 15, 2)->default(0);
