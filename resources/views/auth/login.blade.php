@@ -21,8 +21,8 @@
         }
     </style>
 </head>
-<body class="p-4">
-<div class="container mt-5">
+<body>
+<div class="container-sm mt-5" style="max-width: 400px;">
     <h2>Login</h2>
     <form method="POST" action="{{ route('login.submit') }}">
         @csrf

@@ -32,9 +32,23 @@
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-                <div class="d-flex">
-                    <button class="btn btn-light me-2" onclick="openForm()">Tambah Aset</button>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-light" onclick="openForm()">Tambah Aset</button>
                     <a href="{{ route('assets.printPdf') }}" class="btn btn-warning">Cetak PDF</a>
+
+                    {{-- Tampilkan Logout jika sudah login --}}
+                    @auth
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    @endauth
+
+                    {{-- Tampilkan Login jika belum login --}}
+                    @guest
+                        <a href="{{ route('login') }}" class="btn btn-success">Login</a>
+                    @endguest
                 </div>
             </div>
         </div>
