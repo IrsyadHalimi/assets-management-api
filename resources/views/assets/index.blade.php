@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Aset</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         #notification-tray {
@@ -21,37 +20,54 @@
         }
     </style>
 </head>
-<body class="p-4">
+<body>
 
-    <h1 class="mb-4">Daftar Aset</h1>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Manajemen Aset</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <button class="btn btn-primary mb-3" onclick="openForm()">Tambah Aset</button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+                <div class="d-flex">
+                    <button class="btn btn-light me-2" onclick="openForm()">Tambah Aset</button>
+                    <a href="{{ route('assets.printPdf') }}" class="btn btn-warning">Cetak PDF</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <a href="{{ route('assets.printPdf') }}" class="btn btn-warning mb-3">Cetak PDF</a>
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped" id="assetTable">
-            <thead class="table-dark text-center align-middle">
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kode Aset</th>
-                    <th>Kategori</th>
-                    <th>Lokasi</th>
-                    <th>Deskripsi</th>
-                    <th>Harga Per Item</th>
-                    <th>Jumlah</th>
-                    <th>Total Nilai</th>
-                    <th>Tanggal Pengesahan</th>
-                    <th colspan="2">Aksi</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+    <div class="container">
+        <h3 class="mb-4">Daftar Aset</h3>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="assetTable">
+                <thead class="table-dark text-center align-middle">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Kode Aset</th>
+                        <th>Kategori</th>
+                        <th>Lokasi</th>
+                        <th>Deskripsi</th>
+                        <th>Harga Per Item</th>
+                        <th>Jumlah</th>
+                        <th>Total Nilai</th>
+                        <th>Tanggal Pengesahan</th>
+                        <th colspan="2">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Modal Form -->
     <div class="modal fade" id="assetModal" tabindex="-1">
-        <div class="modal-dialog modal-lg"> <!-- Tambahkan modal-lg untuk lebar -->
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form id="assetForm">
                     <div class="modal-header">
@@ -63,11 +79,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">Nama</label>
-                                <input type="text" id="name" class="form-control" >
+                                <input type="text" id="name" class="form-control">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="asset_code" class="form-label">Kode Asset</label>
-                                <input type="text" class="form-control" id="asset_code" >
+                                <input type="text" class="form-control" id="asset_code">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="category_id" class="form-label">Kategori</label>
@@ -77,7 +93,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="location" class="form-label">Lokasi</label>
-                                <input type="text" id="location" class="form-control" >
+                                <input type="text" id="location" class="form-control">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="description" class="form-label">Deskripsi</label>
@@ -115,7 +131,7 @@
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const notyf = new Notyf({ 
+        const notyf = new Notyf({
             duration: 0,
             dismissible: true,
             position: {
@@ -247,7 +263,7 @@
             const qty = parseInt(document.getElementById('quantity').value) || 0;
             document.getElementById('amount').value = (price * qty).toFixed(2);
         }
-        
+
         document.addEventListener("DOMContentLoaded", function () {
             fetch('/api/categories')
                 .then(response => response.json())

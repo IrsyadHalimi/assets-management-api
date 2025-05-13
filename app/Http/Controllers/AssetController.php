@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -34,14 +35,6 @@ class AssetController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
@@ -67,6 +60,7 @@ class AssetController extends Controller
 
         try {
             $asset = Asset::create($validator->validated());
+            Log::info('Asset created', ['user_id' => auth()->id(), 'data' => $asset]);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Aset berhasil ditambahkan.',
@@ -107,14 +101,6 @@ class AssetController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Asset $asset)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): JsonResponse
@@ -152,6 +138,8 @@ class AssetController extends Controller
                 'established_at' => $request->established_at,
             ]);
 
+            Log::info('Asset updated', ['user_id' => auth()->id(), 'asset_id' => $asset->id, 'changes' => $request->all()]);
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Aset berhasil diperbarui.',
@@ -179,6 +167,8 @@ class AssetController extends Controller
         try {
             $asset = Asset::findOrFail($id);
             $asset->delete();
+
+            Log::warning('Asset soft-deleted', ['user_id' => auth()->id(), 'asset_id' => $asset->id]);
 
             return response()->json([
                 'status' => 'success',
