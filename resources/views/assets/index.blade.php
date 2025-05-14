@@ -57,6 +57,11 @@
     <div class="container">
         <h3 class="mb-4">Daftar Aset</h3>
 
+        <div class="container">
+            <h4 class="mb-4">Grafik Aset per Kategori</h4>
+            <div id="categoryChart" style="height: 400px; margin: 0 auto"></div>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped" id="assetTable">
                 <thead class="table-dark text-center align-middle">
@@ -144,7 +149,65 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/assets/chart/category')
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        const categories = res.data.map(item => item.category);
+                        const data = res.data.map(item => item.total);
+
+                        Highcharts.chart('categoryChart', {
+                            chart: {
+                                type: 'column',
+                                options3d: {
+                                    enabled: true,
+                                    alpha: 15,
+                                    beta: 15,
+                                    depth: 50,
+                                    viewDistance: 25
+                                }
+                            },
+                            title: {
+                                text: 'Jumlah Aset per Kategori'
+                            },
+                            xAxis: {
+                                categories: categories,
+                                title: {
+                                    text: 'Kategori'
+                                }
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Jumlah Aset'
+                                },
+                                allowDecimals: false
+                            },
+                            plotOptions: {
+                                column: {
+                                    depth: 25
+                                }
+                            },
+                            series: [{
+                                name: 'Jumlah Aset',
+                                data: data,
+                                colorByPoint: true
+                            }]
+                        });
+                    } else {
+                        alert('Gagal memuat data chart');
+                        console.error(res.message || res.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Terjadi kesalahan');
+                    console.error(error);
+                });
+        });
+
         const notyf = new Notyf({
             duration: 0,
             dismissible: true,
@@ -163,6 +226,12 @@
                     let i = 1;
                     res.data.data.forEach(asset => {
                         let establishedAt = new Date(asset.established_at).toISOString().slice(0, 10);
+
+                        const formatRupiah = (value) => {
+                            if (value == null) return '-';
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(value));
+                        };
+
                         tbody.innerHTML += `
                             <tr>
                                 <td>${i++}</td>
@@ -171,9 +240,9 @@
                                 <td>${asset.category?.name ?? '-'}</td>
                                 <td>${asset.location}</td>
                                 <td>${asset.description || '-'}</td>
-                                <td>${asset.price}</td>
+                                <td>${formatRupiah(asset.price)}</td>
                                 <td>${asset.quantity}</td>
-                                <td>${asset.amount}</td>
+                                <td>${formatRupiah(asset.amount)}</td>
                                 <td>${establishedAt}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-1" onclick='editAsset(${JSON.stringify(asset)})'>Edit</button>

@@ -72,12 +72,9 @@
     <div class="report-info">
         <table>
             <tr>
-                <td><strong>Disiapkan Oleh:</strong> Admin Sistem</td>
-                <td><strong>Tanggal Laporan:</strong> {{ \Carbon\Carbon::now()->format('d/m/Y') }}</td>
-            </tr>
-            <tr>
-                <td><strong>Departemen:</strong> Inventory & Asset</td>
-                <td><strong>Jumlah Aset:</strong> {{ count($assets) }}</td>
+                <td style="text-align: left"><strong>Dicetak Oleh:</strong> {{ Auth::user()->name }}</td>
+                <td style="text-align: center"><strong>Jumlah Aset:</strong> {{ count($assets) }}</td>
+                <td style="text-align: right"><strong>Tanggal Laporan:</strong> {{ \Carbon\Carbon::now()->format('d/m/Y') }}</td>
             </tr>
         </table>
     </div>

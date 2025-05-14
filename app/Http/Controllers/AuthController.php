@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -19,12 +21,15 @@ class AuthController extends Controller
         $user = User::where('email', $credentials['email'])->first();
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            Log::warning('Login failed for email: ' . $credentials['email']);
             return response()->json([
                 'message' => 'Login gagal. Periksa kembali email dan password.',
             ], 401);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        Log::info('User logged in', ['user_id' => $user->id, 'email' => $user->email]);
 
         return response()->json([
             'access_token' => $token,
@@ -34,7 +39,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+
+        $user->currentAccessToken()->delete();
+
+        Log::info('User logged out', ['user_id' => $user->id, 'email' => $user->email]);
 
         return response()->json(['message' => 'Logout berhasil']);
     }
@@ -46,7 +55,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Validasi input
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -54,21 +62,22 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
+            Log::warning('Registration validation failed', ['errors' => $validator->errors()]);
             return response()->json([
                 'status' => 'validation_error',
                 'errors' => $validator->errors()
             ], 422);
         }
 
-        // Membuat pengguna baru
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Membuat token untuk pengguna baru
         $token = $user->createToken('YourAppName')->plainTextToken;
+
+        Log::info('New user registered', ['user_id' => $user->id, 'email' => $user->email]);
 
         return response()->json([
             'status' => 'success',

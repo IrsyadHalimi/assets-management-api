@@ -198,4 +198,21 @@ class AssetController extends Controller
 
         return $pdf->stream('laporan_aset.pdf');
     }
+
+    public function assetCountPerCategory(): JsonResponse
+    {
+        try {
+            $data = Asset::countPerCategory();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghitung jumlah aset per kategori.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Asset extends Model
 {
@@ -36,5 +37,19 @@ class Asset extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public static function countPerCategory()
+    {
+        return self::select('category_id', DB::raw('count(*) as total'))
+            ->with('category:id,name')
+            ->groupBy('category_id')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'category' => $item->category->name ?? 'Tanpa Kategori',
+                    'total' => $item->total
+                ];
+            });
     }
 }

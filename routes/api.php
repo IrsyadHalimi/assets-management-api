@@ -28,4 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('assets', AssetController::class);
     Route::apiResource('categories', CategoryController::class);
+
+    Route::get('/assets/chart/category', [AssetController::class, 'assetCountPerCategory']);
 });
